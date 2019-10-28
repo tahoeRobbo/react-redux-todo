@@ -42,6 +42,24 @@
     }
   }
 
+  function checkAndDispatch(store, action) {
+    if (
+      action.type === ADD_TODO &&
+      action.todo.name.toLowerCase().indexOf('bitcoin') !== -1
+    ) {
+      return alert('not now, maybe later..')
+    }
+
+    if (
+      action.type === ADD_GOAL &&
+      action.goal.name.toLowerCase().indexOf('bitcoin') !== -1
+    ) {
+      return alert('not now, maybe later..')
+    }
+
+    return store.dispatch(action)
+  }
+
 // reducer fns don't mutate state (must be pure fn)
 // switch based on the action.type that's passed in and use array methods that don't mutate the original state.
 // ex--
@@ -94,12 +112,10 @@
     const name = input.value
     input.value = ''
 
-    store.dispatch(addGoalAction({
+    checkAndDispatch(store, addGoalAction({
       id: generateId(),
       name
     }))
-
-
   }
 
   function addTodo () {
@@ -107,7 +123,7 @@
     const name = input.value
     input.value = ''
 
-    store.dispatch(addTodoAction({
+    checkAndDispatch(store, addTodoAction({
       id: generateId(),
       name,
       complete: false
@@ -129,7 +145,7 @@
   function addGoalToDOM (goal) {
     const node = document.createElement('li')
     node.addEventListener('dblclick', () => {
-      store.dispatch(removeGoalAction(goal.id))
+      checkAndDispatch(store, removeGoalAction(goal.id))
     })
 
     const text = document.createTextNode(goal.name)
@@ -143,10 +159,10 @@
     const node = document.createElement('li')
     node.style.textDecoration = todo.complete ? 'line-through' : 'none'
     node.addEventListener('click', () => {
-      store.dispatch(toggleTodoAction(todo.id))
+      checkAndDispatch(store, toggleTodoAction(todo.id))
     })
     node.addEventListener('dblclick', () => {
-      store.dispatch(removeTodoAction(todo.id))
+      checkAndDispatch(store, removeTodoAction(todo.id))
     })
 
     const text = document.createTextNode(todo.name)
