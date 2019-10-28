@@ -1,43 +1,4 @@
 (function(){
-  // Library code
-  function createStore (reducer) {
-    // four parts
-    // 1. the state
-    // 2. method to get the state (getState)
-    // 3 method to setup listeners to changes on state (subscribe)
-    // 4 update the state (dispatch)
-
-    let state
-    let listeners = []
-
-    const getState = () => state
-
-    // pass a fn that should be invoked when the dispatch fires, after the reducer
-    const subscribe = (listener) => {
-      listeners.push(listener)
-
-      // return a fn that when called will remove the listener
-      // ex let test = store.subscribe(() => console.log('hi')) will add <- fn into listeners
-      // calling test() will remove   {^^^^^^^^^^^^^^^^^^^^^^^} from listeners
-      return () => {
-        listeners = listeners.filter((l) => l !== listener)
-      }
-    }
-
-    // takes in an action to pass to the reducer
-    const dispatch = (action) => {
-      // call reducer, set state to return (reducer always returns state)
-      state = reducer(state, action)
-      // loop over listeners and invoke them
-      listeners.forEach((listener) => listener())
-    }
-
-    return {
-      getState,
-      subscribe,
-      dispatch
-    }
-  }
 //**********************
 // App code
 //**********************
@@ -116,17 +77,10 @@
     }
   }
 
-  // Root reducer
-  // invoking the other reducers will return the proper shape for the state
-  // note - all reducers will fire any time a dispatch is called
-  function app (state = {}, action) {
-    return {
-      todos: todos(state.todos, action),
-      goals: goals(state.goals, action)
-    }
-  }
-
-  let store = createStore(app) // pass in root reducer to be added into store.dispatch
+  const store = Redux.createStore(Redux.combineReducers({
+    todos,
+    goals
+  }))
 
   // for the input and goal ids
   function generateId () {
