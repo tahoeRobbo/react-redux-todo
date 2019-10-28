@@ -127,26 +127,81 @@
   }
 
   let store = createStore(app) // pass in root reducer to be added into store.dispatch
+
+  // for the input and goal ids
+  function generateId () {
+    return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36);
+  }
+
+  // DOM code
+
+  function addGoal () {
+    const input = document.getElementById('goal')
+    const name = input.value
+    input.value = ''
+
+    store.dispatch(addGoalAction({
+      id: generateId(),
+      name
+    }))
+
+
+  }
+
+  function addTodo () {
+    const input = document.getElementById('todo')
+    const name = input.value
+    input.value = ''
+
+    store.dispatch(addTodoAction({
+      id: generateId(),
+      name,
+      complete: false
+    }))
+  }
+
+  store.subscribe(() => console.log(store.getState()))
+
+  store.subscribe(() => {
+    const { todos, goals } = store.getState()
+
+    document.getElementById('goals').innerHTML = ''
+    document.getElementById('todos').innerHTML = ''
+
+    todos.forEach((todo) => addTodoToDOM(todo))
+    goals.forEach((goal) => addGoalToDOM(goal))
+  })
+
+  function addGoalToDOM (goal) {
+    const node = document.createElement('li')
+    node.addEventListener('dblclick', () => {
+      store.dispatch(removeGoalAction(goal.id))
+    })
+
+    const text = document.createTextNode(goal.name)
+    node.appendChild(text)
+
+    document.getElementById('goals')
+      .appendChild(node)
+  }
+
+  function addTodoToDOM (todo) {
+    const node = document.createElement('li')
+    node.style.textDecoration = todo.complete ? 'line-through' : 'none'
+    node.addEventListener('click', () => {
+      store.dispatch(toggleTodoAction(todo.id))
+    })
+    node.addEventListener('dblclick', () => {
+      store.dispatch(removeTodoAction(todo.id))
+    })
+
+    const text = document.createTextNode(todo.name)
+    node.appendChild(text)
+
+    document.getElementById('todos')
+      .appendChild(node)
+  }
+
+  document.getElementById('todo-btn').addEventListener('click', addTodo)
+  document.getElementById('goal-btn').addEventListener('click', addGoal)
 })()
-
-
-// // only specified actions are allowed to interact with the store
-// // helps in the predictability of state
-// let actions = {
-//   ADD_TODO: {
-//     type: ADD_TODO,
-//     todo: {
-//       id: 0,
-//       name: 'Learn Redux',
-//       complete: false
-//     }
-//   },
-//   REMOVE_TODO: {
-//     type: REMOVE_TODO,
-//     id: 0
-//   },
-//   TOGGLE_TODO: {
-//     type: TOGGLE_TODO,
-//     id: 0
-//   }
-// }
