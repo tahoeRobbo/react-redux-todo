@@ -42,6 +42,46 @@
     }
   }
 
+/*
+  based off functional programming technique 'currying'
+  Redux.applyMiddleware is looking for one or more arguments built in the pattern below,
+  with the initial fn taking in store, returning a fn that takes in next, and returns
+  a fn that takes in the action and holds the actual logic of the middleware.
+  These middleware fns need to be composed like this in order for applyMiddleware to chain
+  them together.
+  Once the last iteration (args + 1) finds an empty next, the store will be passed
+  and dispatch will be called
+  Redux has got some push back, but changing applyMiddleware will be a
+  big breaking, so just follow the pattern *shrug*
+  note -- middleware fn's like below are passed as second arg in Redux.CreateStore via Redux.applyMiddleware
+*/
+  const checker = (store) => (next) => (action) => {
+    if (
+      action.type === ADD_TODO &&
+      action.todo.name.toLowerCase().indexOf('bitcoin') !== -1
+    ) {
+      return alert('not now, maybe later..')
+    }
+
+    if (
+      action.type === ADD_GOAL &&
+      action.goal.name.toLowerCase().indexOf('bitcoin') !== -1
+    ) {
+      return alert('not now, maybe later..')
+    }
+
+    return next(action)
+  }
+
+  const logger = (store) => (next) => (action) => {
+    console.group(action.type)
+      console.log(`Current Action --`, action)
+      const res = next(action)
+      console.log(`Current State after action -- `, store.getState())
+    console.groupEnd()
+    return res
+  }
+
 // reducer fns don't mutate state (must be pure fn)
 // switch based on the action.type that's passed in and use array methods that don't mutate the original state.
 // ex--
@@ -80,7 +120,7 @@
   const store = Redux.createStore(Redux.combineReducers({
     todos,
     goals
-  }))
+  }), Redux.applyMiddleware(checker, logger))
 
   // for the input and goal ids
   function generateId () {
@@ -98,8 +138,6 @@
       id: generateId(),
       name
     }))
-
-
   }
 
   function addTodo () {
@@ -113,8 +151,6 @@
       complete: false
     }))
   }
-
-  store.subscribe(() => console.log(store.getState()))
 
   store.subscribe(() => {
     const { todos, goals } = store.getState()
