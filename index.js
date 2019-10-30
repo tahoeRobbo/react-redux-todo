@@ -9,6 +9,7 @@ const REMOVE_TODO = 'REMOVE_TODO'
 const TOGGLE_TODO = 'TOGGLE_TODO'
 const ADD_GOAL = 'ADD_GOAL'
 const REMOVE_GOAL ='REMOVE_GOAL'
+const RECEIVE_DATA = 'RECEIVE_DATA'
 
 // action creators
 function addTodoAction (todo) {
@@ -39,6 +40,14 @@ function removeGoalAction (id) {
   return {
     type: REMOVE_GOAL,
     id
+  }
+}
+
+function receiveDataAction (todos, goals) {
+  return {
+    type: RECEIVE_DATA,
+    todos,
+    goals
   }
 }
 
@@ -100,6 +109,8 @@ function todos (state = [], action) {
       return state.map((todo) => todo.id !== action.id ? todo :
         Object.assign({}, todo, {complete: !todo.complete})
       )
+    case RECEIVE_DATA:
+      return action.todos
     default:
       return state
   }
@@ -112,6 +123,17 @@ function goals (state = [], action) {
       return state.concat([action.goal])
     case REMOVE_GOAL:
       return state.filter((goal) => goal.id !== action.id)
+    case RECEIVE_DATA:
+      return action.goals
+    default:
+      return state
+  }
+}
+
+function loading (state = true, action) {
+  switch (action.type) {
+    case RECEIVE_DATA:
+      return false
     default:
       return state
   }
@@ -119,7 +141,8 @@ function goals (state = [], action) {
 
 const store = Redux.createStore(Redux.combineReducers({
   todos,
-  goals
+  goals,
+  loading
 }), Redux.applyMiddleware(checker, logger))
 
 // for the input and goal ids

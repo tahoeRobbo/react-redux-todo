@@ -20,22 +20,32 @@ function List ( props ) {
 class Todos extends React.Component {
   addTodo = (e) => {
     e.preventDefault()
-    const name = this.input.value
-    this.input.value = ''
 
-    this.props.store.dispatch(addTodoAction({
-      id: generateId(),
-      name,
-      complete: false
-    }))
+    return API.saveTodo(this.input.value)
+      .then((todo) => {
+        this.store.dispatch(addTodoAction(todo))
+        this.input.value = ''
+      })
+      .catch(() => alert('There was an error saving your todo'))
   }
 
-  removeTodo = (item) => {
-    this.props.store.dispatch(removeTodoAction(item.id))
+  removeTodo = (todo) => {
+    this.props.store.dispatch(removeTodoAction(todo.id))
+
+    return API.deleteTodo(todo.id)
+      .catch(() => {
+        this.props.store.dispatch(addTodoAction(todo))
+        alert('There was an error removing your todo')
+    })
   }
 
-  toggleTodo = (item) => {
-    this.props.store.dispatch(toggleTodoAction(item.id))
+  toggleTodo = (todo) => {
+    this.props.store.dispatch(toggleTodoAction(todo.id))
+    return API.saveTodoToggle(todo.id)
+      .catch(() => {
+        this.props.store.dispatch(toggleTodoAction(todo.id))
+        alert('there was an error toggling your todo status')
+      })
   }
 
   render() {
@@ -62,17 +72,25 @@ class Todos extends React.Component {
 class Goals extends React.Component {
   addGoal = (e) => {
     e.preventDefault()
-    const name = this.input.value
-    this.input.value = ''
 
-    this.props.store.dispatch(addGoalAction({
-      id: generateId(),
-      name,
-    }))
+    return API.saveGoal(this.input.vale)
+      .then((goal) => {
+        this.props.store.dispatch(addGoalAction(goal))
+        this.input.value = ''
+      })
+      .catch(() => {
+        alert('There was an error adding your goal')
+      })
   }
 
-  removeGoal = (item) => {
-      this.props.store.dispatch(removeGoalAction(item.id))
+  removeGoal = (goal) => {
+    this.props.store.dispatch(removeGoalAction(goal.id))
+
+    return API.deleteGoal(goal)
+      .catch(() => {
+        this.store.dispatch(addGoalAction(goal))
+        alert('There was an error deleting your goal')
+    })
   }
 
   render() {
@@ -95,16 +113,36 @@ class Goals extends React.Component {
   }
 }
 
+function Loading () {
+  return (
+    <h2>Loading...</h2>
+  )
+}
+
 class App extends React.Component {
   componentDidMount () {
+    const { store } = this.props
+
+    Promise.all([
+      API.fetchTodos(),
+      API.fetchGoals()
+    ]).then(([ todos, goals ]) => {
+      store.dispatch(receiveDataAction(todos, goals))
+    })
+
     // generally antipattern to use forceUpdate over setState to cause re-render,
     // but makes more sense in this case
-    this.props.store.subscribe(() => this.forceUpdate())
+    store.subscribe(() => this.forceUpdate())
   }
 
   render () {
     const { store } = this.props
-    const { todos, goals } = store.getState()
+    const { todos, goals, loading } = store.getState()
+
+    if (loading) {
+      return <Loading />
+    }
+
     return (
       <div>
         <Todos store={store} todos={todos} />
