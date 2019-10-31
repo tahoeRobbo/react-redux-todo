@@ -164,12 +164,13 @@ const logger = (store) => (next) => (action) => {
 // if the type of action is a fn, call that function passing it the dispatch fn as an arg
 // else, it's a normal object for dispatching so just pass it along
 // used to decouple the data interaction from the component (sep of concerns, data vs UI)
-const thunk = (store) => (next) => (action) => {
-  if (typeof action === 'function') {
-    return(action(store.dispatch))
-  }
-  return next(action)
-}
+// replacing with ReduxThunk
+// const thunk = (store) => (next) => (action) => {
+//   if (typeof action === 'function') {
+//     return(action(store.dispatch))
+//   }
+//   return next(action)
+// }
 
 // reducer fns don't mutate state (must be pure fn)
 // switch based on the action.type that's passed in and use array methods that don't mutate the original state.
@@ -223,7 +224,7 @@ const store = Redux.createStore(Redux.combineReducers({
   todos,
   goals,
   loading
-}), Redux.applyMiddleware(thunk, checker, logger))
+}), Redux.applyMiddleware(ReduxThunk.default, checker, logger))
 
 // for the input and goal ids
 function generateId () {
