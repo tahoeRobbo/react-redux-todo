@@ -51,6 +51,74 @@ function receiveDataAction (todos, goals) {
   }
 }
 
+function handleAddTodo(name) {
+  return (dispatch) => {
+    return API.saveTodo(name)
+    .then((todo) => {
+      dispatch(addTodoAction(todo))
+    })
+    .catch(() => alert('There was an error saving your todo'))
+  }
+}
+
+function handleRemoveTodo(todo) {
+  return (dispatch) => {
+    dispatch(removeTodoAction(todo.id))
+
+    return API.deleteTodo(todo.id)
+    .catch(() => {
+      dispatch(addTodoAction(todo))
+      alert('There was an error removing your todo')
+    })
+  }
+}
+
+function handleToggleTodo(id) {
+  return (dispatch) => {
+    dispatch(toggleTodoAction(id))
+
+    return API.saveTodoToggle(id)
+    .catch(() => {
+      dispatch(toggleTodoAction(id))
+      alert('there was an error toggling your todo status')
+    })
+  }
+}
+
+function handleAddGoal(name) {
+  return (dispatch) => {
+    return API.saveGoal(name)
+    .then((goal) => {
+      dispatch(addGoalAction(goal))
+    })
+    .catch(() => {
+      alert('There was an error adding your goal')
+    })
+  }
+}
+
+function handleRemoveGoal(goal) {
+  return (dispatch) => {
+    dispatch(removeGoalAction(goal.id))
+
+    return API.deleteGoal(goal)
+    .catch(() => {
+      dispatch(addGoalAction(goal))
+      alert('There was an error deleting your goal')
+    })
+  }
+}
+
+function handleRecieveData() {
+  return (dispatch) => {
+    Promise.all([
+      API.fetchTodos(),
+      API.fetchGoals()
+    ]).then(([ todos, goals ]) => {
+      dispatch(receiveDataAction(todos, goals))
+    })
+  }
+}
 /*
 based off functional programming technique 'currying'
 Redux.applyMiddleware is looking for one or more arguments built in the pattern below,
@@ -89,6 +157,16 @@ const logger = (store) => (next) => (action) => {
     console.log(`Current State after action -- `, store.getState())
   console.groupEnd()
   return res
+}
+
+// if the type of action is a fn, call that function passing it the dispatch fn as an arg
+// else, it's a normal object for dispatching so just pass it along
+// used to decouple the data interaction from the component (sep of concerns, data vs UI)
+const thunk = (store) => (next) => (action) => {
+  if (typeof action === 'function') {
+    return(action(store.dispatch))
+  }
+  return next(action)
 }
 
 // reducer fns don't mutate state (must be pure fn)
@@ -143,7 +221,7 @@ const store = Redux.createStore(Redux.combineReducers({
   todos,
   goals,
   loading
-}), Redux.applyMiddleware(checker, logger))
+}), Redux.applyMiddleware(thunk, checker, logger))
 
 // for the input and goal ids
 function generateId () {

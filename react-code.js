@@ -20,32 +20,16 @@ function List ( props ) {
 class Todos extends React.Component {
   addTodo = (e) => {
     e.preventDefault()
-
-    return API.saveTodo(this.input.value)
-      .then((todo) => {
-        this.store.dispatch(addTodoAction(todo))
-        this.input.value = ''
-      })
-      .catch(() => alert('There was an error saving your todo'))
+    this.props.store.dispatch(handleAddTodo(this.input.value))
+    this.input.value = ''
   }
 
   removeTodo = (todo) => {
-    this.props.store.dispatch(removeTodoAction(todo.id))
-
-    return API.deleteTodo(todo.id)
-      .catch(() => {
-        this.props.store.dispatch(addTodoAction(todo))
-        alert('There was an error removing your todo')
-    })
+    this.props.store.dispatch(handleRemoveTodo(todo))
   }
 
   toggleTodo = (todo) => {
-    this.props.store.dispatch(toggleTodoAction(todo.id))
-    return API.saveTodoToggle(todo.id)
-      .catch(() => {
-        this.props.store.dispatch(toggleTodoAction(todo.id))
-        alert('there was an error toggling your todo status')
-      })
+    this.props.store.dispatch(handleToggleTodo(todo.id))
   }
 
   render() {
@@ -72,25 +56,12 @@ class Todos extends React.Component {
 class Goals extends React.Component {
   addGoal = (e) => {
     e.preventDefault()
-
-    return API.saveGoal(this.input.vale)
-      .then((goal) => {
-        this.props.store.dispatch(addGoalAction(goal))
-        this.input.value = ''
-      })
-      .catch(() => {
-        alert('There was an error adding your goal')
-      })
+    this.props.store.dispatch(handleAddGoal(this.input.value))
+    this.input.value = ''
   }
 
   removeGoal = (goal) => {
-    this.props.store.dispatch(removeGoalAction(goal.id))
-
-    return API.deleteGoal(goal)
-      .catch(() => {
-        this.store.dispatch(addGoalAction(goal))
-        alert('There was an error deleting your goal')
-    })
+    this.props.store.dispatch(handleRemoveGoal(goal))
   }
 
   render() {
@@ -123,12 +94,7 @@ class App extends React.Component {
   componentDidMount () {
     const { store } = this.props
 
-    Promise.all([
-      API.fetchTodos(),
-      API.fetchGoals()
-    ]).then(([ todos, goals ]) => {
-      store.dispatch(receiveDataAction(todos, goals))
-    })
+    store.dispatch(handleRecieveData())
 
     // generally antipattern to use forceUpdate over setState to cause re-render,
     // but makes more sense in this case
