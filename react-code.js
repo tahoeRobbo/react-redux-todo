@@ -20,8 +20,10 @@ function List ( props ) {
 class Todos extends React.Component {
   addTodo = (e) => {
     e.preventDefault()
-    this.props.store.dispatch(handleAddTodo(this.input.value))
-    this.input.value = ''
+    this.props.store.dispatch(handleAddTodo(
+      this.input.value,
+      () => this.input.value = ''
+    ))
   }
 
   removeTodo = (todo) => {
@@ -56,8 +58,10 @@ class Todos extends React.Component {
 class Goals extends React.Component {
   addGoal = (e) => {
     e.preventDefault()
-    this.props.store.dispatch(handleAddGoal(this.input.value))
-    this.input.value = ''
+    this.props.store.dispatch(handleAddGoal(
+      this.input.value,
+      () => this.input.value = ''
+    ))
   }
 
   removeGoal = (goal) => {

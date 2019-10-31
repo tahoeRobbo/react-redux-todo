@@ -51,11 +51,12 @@ function receiveDataAction (todos, goals) {
   }
 }
 
-function handleAddTodo(name) {
+function handleAddTodo(name, cb) {
   return (dispatch) => {
     return API.saveTodo(name)
     .then((todo) => {
       dispatch(addTodoAction(todo))
+      cb()
     })
     .catch(() => alert('There was an error saving your todo'))
   }
@@ -85,11 +86,12 @@ function handleToggleTodo(id) {
   }
 }
 
-function handleAddGoal(name) {
+function handleAddGoal(name, cb) {
   return (dispatch) => {
     return API.saveGoal(name)
     .then((goal) => {
       dispatch(addGoalAction(goal))
+      cb()
     })
     .catch(() => {
       alert('There was an error adding your goal')
