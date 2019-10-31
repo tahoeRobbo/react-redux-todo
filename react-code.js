@@ -20,22 +20,18 @@ function List ( props ) {
 class Todos extends React.Component {
   addTodo = (e) => {
     e.preventDefault()
-    const name = this.input.value
-    this.input.value = ''
-
-    this.props.store.dispatch(addTodoAction({
-      id: generateId(),
-      name,
-      complete: false
-    }))
+    this.props.store.dispatch(handleAddTodo(
+      this.input.value,
+      () => this.input.value = ''
+    ))
   }
 
-  removeTodo = (item) => {
-    this.props.store.dispatch(removeTodoAction(item.id))
+  removeTodo = (todo) => {
+    this.props.store.dispatch(handleRemoveTodo(todo))
   }
 
-  toggleTodo = (item) => {
-    this.props.store.dispatch(toggleTodoAction(item.id))
+  toggleTodo = (todo) => {
+    this.props.store.dispatch(handleToggleTodo(todo.id))
   }
 
   render() {
@@ -62,17 +58,14 @@ class Todos extends React.Component {
 class Goals extends React.Component {
   addGoal = (e) => {
     e.preventDefault()
-    const name = this.input.value
-    this.input.value = ''
-
-    this.props.store.dispatch(addGoalAction({
-      id: generateId(),
-      name,
-    }))
+    this.props.store.dispatch(handleAddGoal(
+      this.input.value,
+      () => this.input.value = ''
+    ))
   }
 
-  removeGoal = (item) => {
-      this.props.store.dispatch(removeGoalAction(item.id))
+  removeGoal = (goal) => {
+    this.props.store.dispatch(handleRemoveGoal(goal))
   }
 
   render() {
@@ -95,16 +88,31 @@ class Goals extends React.Component {
   }
 }
 
+function Loading () {
+  return (
+    <h2>Loading...</h2>
+  )
+}
+
 class App extends React.Component {
   componentDidMount () {
+    const { store } = this.props
+
+    store.dispatch(handleRecieveData())
+
     // generally antipattern to use forceUpdate over setState to cause re-render,
     // but makes more sense in this case
-    this.props.store.subscribe(() => this.forceUpdate())
+    store.subscribe(() => this.forceUpdate())
   }
 
   render () {
     const { store } = this.props
-    const { todos, goals } = store.getState()
+    const { todos, goals, loading } = store.getState()
+
+    if (loading) {
+      return <Loading />
+    }
+
     return (
       <div>
         <Todos store={store} todos={todos} />
