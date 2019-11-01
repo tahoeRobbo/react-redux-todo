@@ -96,17 +96,12 @@ function Loading () {
 
 class App extends React.Component {
   componentDidMount () {
-    const { store } = this.props
-
-    store.dispatch(handleRecieveData())
-
-    // generally antipattern to use forceUpdate over setState to cause re-render,
-    // but makes more sense in this case
-    store.subscribe(() => this.forceUpdate())
+    const { dispatch } = this.props
+    dispatch(handleRecieveData())
   }
 
   render () {
-    const { loading } = this.props.store.getState()
+    const { loading } = this.props
 
     if (loading) {
       return <Loading />
@@ -123,6 +118,7 @@ class App extends React.Component {
 
 const Context = React.createContext()
 
+// used to provide the store via react Context.  Wrap top-level of app to make available
 class Provider extends React.Component {
   render () {
     return (
@@ -132,44 +128,71 @@ class Provider extends React.Component {
     )
   }
 }
+// **************************************************************
+// Handrolled connect function
+// Goal -- Render any component, passing that component any data it needs from the store
 
-class ConnectedApp extends React.Component {
-  render () {
-    return (
-      <Context.Consumer>
-        {(store) => (
-          <App store={store} />
-        )}
-      </Context.Consumer>
-    )
+// connect will be a function that's argument is a function that returns an object
+// containing the necessary data from the state for a component (plus dispatch by default)
+
+// conect will return a function that will take in the component that will be 'connected'
+// the connected component will be given the required pieces from state and dispatch as props
+
+// the returned component from connect must also be able to update the UI based on changing state
+// and stop watching when unmounted
+
+// example const ConnectedApp = connect((state) => ({
+//   loading: state.loading
+// }))(App)
+
+function connect (mapStateToProps) {
+  return (Component) => {
+    class Receiver extends React.Component {
+      componentDidMount () {
+        const { subscribe } = this.props.store
+
+        this.unsubscribe = subscribe(() => this.forceUpdate())
+      }
+
+      componentWillUnmount () {
+        this.unsubscribe()
+      }
+
+      render () {
+        const { dispatch, getState } = this.props.store
+        const state = getState()
+        const stateNeeded = mapStateToProps(state)
+        return <Component {...stateNeeded} dispatch={dispatch} />
+      }
+    }
+
+    class ConnectedComponent extends React.Component {
+      render () {
+        return (
+          <Context.Consumer>
+            {(store) => <Receiver store={store}/> }
+          </Context.Consumer>
+        )
+      }
+    }
+
+    return ConnectedComponent
   }
 }
 
-class ConnectedTodos extends React.Component {
-  render () {
-    return (
-      <Context.Consumer>
-        {(store) => {
-          const { todos } = store.getState()
-          return <Todos todos={todos} dispatch={store.dispatch} />
-        }}
-      </Context.Consumer>
-    )
-  }
-}
+const ConnectedApp = connect((state) => ({
+    loading: state.loading
+}))(App)
 
-class ConnectedGoals extends React.Component {
-  render () {
-    return (
-      <Context.Consumer>
-        {(store) => {
-          const { goals } = store.getState()
-          return <Goals goals={goals} dispatch={store.dispatch} />
-        }}
-      </Context.Consumer>
-    )
-  }
-}
+const ConnectedTodos = connect((state) => ({
+  todos: state.todos
+}))(Todos)
+
+const ConnectedGoals = connect((state) => ({
+  goals: state.goals
+}))(Goals)
+
+
 
 ReactDOM.render(
   <Provider store={store}>
