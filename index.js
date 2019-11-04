@@ -3,124 +3,124 @@
 // App code
 //**********************
 
-// Constants
-const ADD_TODO = 'ADD_TODO'
-const REMOVE_TODO = 'REMOVE_TODO'
-const TOGGLE_TODO = 'TOGGLE_TODO'
-const ADD_GOAL = 'ADD_GOAL'
-const REMOVE_GOAL ='REMOVE_GOAL'
-const RECEIVE_DATA = 'RECEIVE_DATA'
+// // Constants
+// const ADD_TODO = 'ADD_TODO'
+// const REMOVE_TODO = 'REMOVE_TODO'
+// const TOGGLE_TODO = 'TOGGLE_TODO'
+// const ADD_GOAL = 'ADD_GOAL'
+// const REMOVE_GOAL ='REMOVE_GOAL'
+// const RECEIVE_DATA = 'RECEIVE_DATA'
 
 // action creators
-function addTodoAction (todo) {
-  return {
-    type: ADD_TODO,
-    todo
-  }
-}
-function removeTodoAction (id) {
-  return {
-    type: REMOVE_TODO,
-    id
-  }
-}
-function toggleTodoAction (id) {
-  return {
-    type: TOGGLE_TODO,
-    id
-  }
-}
-function addGoalAction (goal) {
-  return {
-    type: ADD_GOAL,
-    goal
-  }
-}
-function removeGoalAction (id) {
-  return {
-    type: REMOVE_GOAL,
-    id
-  }
-}
+// function addTodoAction (todo) {
+//   return {
+//     type: ADD_TODO,
+//     todo
+//   }
+// }
+// function removeTodoAction (id) {
+//   return {
+//     type: REMOVE_TODO,
+//     id
+//   }
+// }
+// function toggleTodoAction (id) {
+//   return {
+//     type: TOGGLE_TODO,
+//     id
+//   }
+// }
+// function addGoalAction (goal) {
+//   return {
+//     type: ADD_GOAL,
+//     goal
+//   }
+// }
+// function removeGoalAction (id) {
+//   return {
+//     type: REMOVE_GOAL,
+//     id
+//   }
+// }
 
-function receiveDataAction (todos, goals) {
-  return {
-    type: RECEIVE_DATA,
-    todos,
-    goals
-  }
-}
+// function receiveDataAction (todos, goals) {
+//   return {
+//     type: RECEIVE_DATA,
+//     todos,
+//     goals
+//   }
+// }
 
-function handleAddTodo(name, cb) {
-  return (dispatch) => {
-    return API.saveTodo(name)
-    .then((todo) => {
-      dispatch(addTodoAction(todo))
-      cb()
-    })
-    .catch(() => alert('There was an error saving your todo'))
-  }
-}
+// function handleAddTodo(name, cb) {
+//   return (dispatch) => {
+//     return API.saveTodo(name)
+//     .then((todo) => {
+//       dispatch(addTodoAction(todo))
+//       cb()
+//     })
+//     .catch(() => alert('There was an error saving your todo'))
+//   }
+// }
+//
+// function handleRemoveTodo(todo) {
+//   return (dispatch) => {
+//     dispatch(removeTodoAction(todo.id))
+//
+//     return API.deleteTodo(todo.id)
+//     .catch(() => {
+//       dispatch(addTodoAction(todo))
+//       alert('There was an error removing your todo')
+//     })
+//   }
+// }
+//
+// function handleToggleTodo(id) {
+//   return (dispatch) => {
+//     dispatch(toggleTodoAction(id))
+//
+//     return API.saveTodoToggle(id)
+//     .catch(() => {
+//       dispatch(toggleTodoAction(id))
+//       alert('there was an error toggling your todo status')
+//     })
+//   }
+// }
 
-function handleRemoveTodo(todo) {
-  return (dispatch) => {
-    dispatch(removeTodoAction(todo.id))
-
-    return API.deleteTodo(todo.id)
-    .catch(() => {
-      dispatch(addTodoAction(todo))
-      alert('There was an error removing your todo')
-    })
-  }
-}
-
-function handleToggleTodo(id) {
-  return (dispatch) => {
-    dispatch(toggleTodoAction(id))
-
-    return API.saveTodoToggle(id)
-    .catch(() => {
-      dispatch(toggleTodoAction(id))
-      alert('there was an error toggling your todo status')
-    })
-  }
-}
-
-function handleAddGoal(name, cb) {
-  return (dispatch) => {
-    return API.saveGoal(name)
-    .then((goal) => {
-      dispatch(addGoalAction(goal))
-      cb()
-    })
-    .catch(() => {
-      alert('There was an error adding your goal')
-    })
-  }
-}
-
-function handleRemoveGoal(goal) {
-  return (dispatch) => {
-    dispatch(removeGoalAction(goal.id))
-
-    return API.deleteGoal(goal)
-    .catch(() => {
-      dispatch(addGoalAction(goal))
-      alert('There was an error deleting your goal')
-    })
-  }
-}
-
-function handleRecieveData() {
-  return (dispatch) => {
-    Promise.all([
-      API.fetchTodos(),
-      API.fetchGoals()
-    ]).then(([ todos, goals ]) => {
-      dispatch(receiveDataAction(todos, goals))
-    })
-  }
-}
+// function handleAddGoal(name, cb) {
+//   return (dispatch) => {
+//     return API.saveGoal(name)
+//     .then((goal) => {
+//       dispatch(addGoalAction(goal))
+//       cb()
+//     })
+//     .catch(() => {
+//       alert('There was an error adding your goal')
+//     })
+//   }
+// }
+//
+// function handleRemoveGoal(goal) {
+//   return (dispatch) => {
+//     dispatch(removeGoalAction(goal.id))
+//
+//     return API.deleteGoal(goal)
+//     .catch(() => {
+//       dispatch(addGoalAction(goal))
+//       alert('There was an error deleting your goal')
+//     })
+//   }
+// }
+//
+// function handleRecieveData() {
+//   return (dispatch) => {
+//     Promise.all([
+//       API.fetchTodos(),
+//       API.fetchGoals()
+//     ]).then(([ todos, goals ]) => {
+//       dispatch(receiveDataAction(todos, goals))
+//     })
+//   }
+// }
 /*
 based off functional programming technique 'currying'
 Redux.applyMiddleware is looking for one or more arguments built in the pattern below,
@@ -133,33 +133,33 @@ and dispatch will be called
 Redux has got some push back, but changing applyMiddleware will be a
 big breaking, so just follow the pattern *shrug*
 note -- middleware fn's like below are passed as second arg in Redux.CreateStore via Redux.applyMiddleware
-*/
-const checker = (store) => (next) => (action) => {
-  if (
-    action.type === ADD_TODO &&
-    action.todo.name.toLowerCase().indexOf('bitcoin') !== -1
-  ) {
-    return alert('not now, maybe later..')
-  }
-
-  if (
-    action.type === ADD_GOAL &&
-    action.goal.name.toLowerCase().indexOf('bitcoin') !== -1
-  ) {
-    return alert('not now, maybe later..')
-  }
-
-  return next(action)
-}
-
-const logger = (store) => (next) => (action) => {
-  console.group(action.type)
-    console.log(`Current Action --`, action)
-    const res = next(action)
-    console.log(`Current State after action -- `, store.getState())
-  console.groupEnd()
-  return res
-}
+// */
+// const checker = (store) => (next) => (action) => {
+//   if (
+//     action.type === ADD_TODO &&
+//     action.todo.name.toLowerCase().indexOf('bitcoin') !== -1
+//   ) {
+//     return alert('not now, maybe later..')
+//   }
+//
+//   if (
+//     action.type === ADD_GOAL &&
+//     action.goal.name.toLowerCase().indexOf('bitcoin') !== -1
+//   ) {
+//     return alert('not now, maybe later..')
+//   }
+//
+//   return next(action)
+// }
+//
+// const logger = (store) => (next) => (action) => {
+//   console.group(action.type)
+//     console.log(`Current Action --`, action)
+//     const res = next(action)
+//     console.log(`Current State after action -- `, store.getState())
+//   console.groupEnd()
+//   return res
+// }
 
 // if the type of action is a fn, call that function passing it the dispatch fn as an arg
 // else, it's a normal object for dispatching so just pass it along
@@ -179,46 +179,46 @@ const logger = (store) => (next) => (action) => {
 // filter over pop / unshift / splice to remove
 // map if altering a piece of existing state
 
-// reducer fn for 'todos' portion of stat
-function todos (state = [], action) {
-  switch(action.type) {
-    case ADD_TODO:
-      return state.concat([action.todo])
-    case REMOVE_TODO:
-      return state.filter((todo) => todo.id !== action.id)
-    case TOGGLE_TODO:
-      return state.map((todo) => todo.id !== action.id ? todo :
-        Object.assign({}, todo, {complete: !todo.complete})
-      )
-    case RECEIVE_DATA:
-      return action.todos
-    default:
-      return state
-  }
-}
-
-// second reducer fn for 'goals' portion of state
-function goals (state = [], action) {
-  switch (action.type) {
-    case ADD_GOAL:
-      return state.concat([action.goal])
-    case REMOVE_GOAL:
-      return state.filter((goal) => goal.id !== action.id)
-    case RECEIVE_DATA:
-      return action.goals
-    default:
-      return state
-  }
-}
-
-function loading (state = true, action) {
-  switch (action.type) {
-    case RECEIVE_DATA:
-      return false
-    default:
-      return state
-  }
-}
+// // reducer fn for 'todos' portion of stat
+// function todos (state = [], action) {
+//   switch(action.type) {
+//     case ADD_TODO:
+//       return state.concat([action.todo])
+//     case REMOVE_TODO:
+//       return state.filter((todo) => todo.id !== action.id)
+//     case TOGGLE_TODO:
+//       return state.map((todo) => todo.id !== action.id ? todo :
+//         Object.assign({}, todo, {complete: !todo.complete})
+//       )
+//     case RECEIVE_DATA:
+//       return action.todos
+//     default:
+//       return state
+//   }
+// }
+//
+// // second reducer fn for 'goals' portion of state
+// function goals (state = [], action) {
+//   switch (action.type) {
+//     case ADD_GOAL:
+//       return state.concat([action.goal])
+//     case REMOVE_GOAL:
+//       return state.filter((goal) => goal.id !== action.id)
+//     case RECEIVE_DATA:
+//       return action.goals
+//     default:
+//       return state
+//   }
+// }
+//
+// function loading (state = true, action) {
+//   switch (action.type) {
+//     case RECEIVE_DATA:
+//       return false
+//     default:
+//       return state
+//   }
+// }
 
 const store = Redux.createStore(Redux.combineReducers({
   todos,

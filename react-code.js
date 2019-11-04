@@ -1,124 +1,124 @@
-function List ( props ) {
-  const items = props.items
-  return (
-    <ul>
-      {items.map((item) => (
-        <li key={item.id}>
-          <span
-            onClick={() => props.toggle && props.toggle(item)}
-            style={{textDecoration: item.complete ? 'line-through' : 'none'}}
-          >
-              {item.name}
-          </span>
-          <button onClick={() => props.remove(item)}>X</button>
-        </li>
-      ))}
-    </ul>
-  )
-}
+// function List ( props ) {
+//   const items = props.items
+//   return (
+//     <ul>
+//       {items.map((item) => (
+//         <li key={item.id}>
+//           <span
+//             onClick={() => props.toggle && props.toggle(item)}
+//             style={{textDecoration: item.complete ? 'line-through' : 'none'}}
+//           >
+//               {item.name}
+//           </span>
+//           <button onClick={() => props.remove(item)}>X</button>
+//         </li>
+//       ))}
+//     </ul>
+//   )
+// }
 
-class Todos extends React.Component {
-  addTodo = (e) => {
-    e.preventDefault()
-    this.props.dispatch(handleAddTodo(
-      this.input.value,
-      () => this.input.value = ''
-    ))
-  }
+// class Todos extends React.Component {
+//   addTodo = (e) => {
+//     e.preventDefault()
+//     this.props.dispatch(handleAddTodo(
+//       this.input.value,
+//       () => this.input.value = ''
+//     ))
+//   }
+//
+//   removeTodo = (todo) => {
+//     this.props.dispatch(handleRemoveTodo(todo))
+//   }
+//
+//   toggleTodo = (todo) => {
+//     this.props.dispatch(handleToggleTodo(todo.id))
+//   }
+//
+//   render() {
+//     return (
+//       <div>
+//         <h1>Todos</h1>
+//         {/*uncontrolled input*/}
+//         <input
+//           type='text'
+//           placeholder='Add Todo'
+//           ref={(input) => this.input = input}
+//         />
+//         <button onClick={this.addTodo}>Add Todo</button>
+//       <List
+//         items={this.props.todos}
+//         remove={this.removeTodo}
+//         toggle={this.toggleTodo}
+//       />
+//       </div>
+//     )
+//   }
+// }
 
-  removeTodo = (todo) => {
-    this.props.dispatch(handleRemoveTodo(todo))
-  }
+// class Goals extends React.Component {
+//   addGoal = (e) => {
+//     e.preventDefault()
+//     this.props.dispatch(handleAddGoal(
+//       this.input.value,
+//       () => this.input.value = ''
+//     ))
+//   }
+//
+//   removeGoal = (goal) => {
+//     this.props.dispatch(handleRemoveGoal(goal))
+//   }
+//
+//   render() {
+//     return (
+//       <div>
+//         <h1>Goals</h1>
+//         {/*uncontrolled input*/}
+//         <input
+//           type='text'
+//           placeholder='Add Goal'
+//           ref={(input) => this.input = input}
+//         />
+//         <button onClick={this.addGoal}>Add Goal</button>
+//         <List
+//           items={this.props.goals}
+//           remove={this.removeGoal}
+//         />
+//       </div>
+//     )
+//   }
+// }
 
-  toggleTodo = (todo) => {
-    this.props.dispatch(handleToggleTodo(todo.id))
-  }
-
-  render() {
-    return (
-      <div>
-        <h1>Todos</h1>
-        {/*uncontrolled input*/}
-        <input
-          type='text'
-          placeholder='Add Todo'
-          ref={(input) => this.input = input}
-        />
-        <button onClick={this.addTodo}>Add Todo</button>
-      <List
-        items={this.props.todos}
-        remove={this.removeTodo}
-        toggle={this.toggleTodo}
-      />
-      </div>
-    )
-  }
-}
-
-class Goals extends React.Component {
-  addGoal = (e) => {
-    e.preventDefault()
-    this.props.dispatch(handleAddGoal(
-      this.input.value,
-      () => this.input.value = ''
-    ))
-  }
-
-  removeGoal = (goal) => {
-    this.props.dispatch(handleRemoveGoal(goal))
-  }
-
-  render() {
-    return (
-      <div>
-        <h1>Goals</h1>
-        {/*uncontrolled input*/}
-        <input
-          type='text'
-          placeholder='Add Goal'
-          ref={(input) => this.input = input}
-        />
-        <button onClick={this.addGoal}>Add Goal</button>
-        <List
-          items={this.props.goals}
-          remove={this.removeGoal}
-        />
-      </div>
-    )
-  }
-}
-
-function Loading () {
-  return (
-    <h2>Loading...</h2>
-  )
-}
-
-class App extends React.Component {
-  componentDidMount () {
-    const { dispatch } = this.props
-    dispatch(handleRecieveData())
-  }
-
-  render () {
-    const { loading } = this.props
-
-    if (loading) {
-      return <Loading />
-    }
-
-    return (
-      <div>
-        <ConnectedTodos />
-        <ConnectedGoals />
-      </div>
-    )
-  }
-}
+// function Loading () {
+//   return (
+//     <h2>Loading...</h2>
+//   )
+// }
+//
+// class App extends React.Component {
+//   componentDidMount () {
+//     const { dispatch } = this.props
+//     dispatch(handleReceiveData())
+//   }
+//
+//   render () {
+//     const { loading } = this.props
+//
+//     if (loading) {
+//       return <Loading />
+//     }
+//
+//     return (
+//       <div>
+//         <ConnectedTodos />
+//         <ConnectedGoals />
+//       </div>
+//     )
+//   }
+// }
 
 // *****************************************************************************
 // connect react to redux store in efficient way
-const Context = React.createContext()
+// const Context = React.createContext()
 // // used to provide the store via react Context.  Wrap top-level of app to make available
 // class Provider extends React.Component {
 //   render () {
@@ -182,23 +182,16 @@ const Context = React.createContext()
 //   }
 // }
 
-const ConnectedApp = ReactRedux.connect((state) => ({
-    loading: state.loading
-}))(App)
+// const ConnectedApp = ReactRedux.connect((state) => ({
+//     loading: state.loading
+// }))(App)
+//
+// const ConnectedTodos = ReactRedux.connect((state) => ({
+//   todos: state.todos
+// }))(Todos)
 
-const ConnectedTodos = ReactRedux.connect((state) => ({
-  todos: state.todos
-}))(Todos)
-
-const ConnectedGoals = ReactRedux.connect((state) => ({
-  goals: state.goals
-}))(Goals)
+// const ConnectedGoals = ReactRedux.connect((state) => ({
+//   goals: state.goals
+// }))(Goals)
 
 
-
-ReactDOM.render(
-  <ReactRedux.Provider store={store}>
-    <ConnectedApp />
-  </ReactRedux.Provider>,
-  document.getElementById('app')
-)
