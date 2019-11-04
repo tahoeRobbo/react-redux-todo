@@ -1,3 +1,4 @@
+import { ADD_GOAL, ADD_TODO } from '../constants'
 /*
 based off functional programming technique 'currying'
 Redux.applyMiddleware is looking for one or more arguments built in the pattern below,
