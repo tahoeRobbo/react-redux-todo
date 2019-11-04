@@ -116,19 +116,21 @@ class App extends React.Component {
   }
 }
 
+// *****************************************************************************
+// connect react to redux store in efficient way
 const Context = React.createContext()
+// // used to provide the store via react Context.  Wrap top-level of app to make available
+// class Provider extends React.Component {
+//   render () {
+//     return (
+//       <Context.Provider value={this.props.store}>
+//         {this.props.children}
+//       </Context.Provider>
+//     )
+//   }
+// }
 
-// used to provide the store via react Context.  Wrap top-level of app to make available
-class Provider extends React.Component {
-  render () {
-    return (
-      <Context.Provider value={this.props.store}>
-        {this.props.children}
-      </Context.Provider>
-    )
-  }
-}
-// **************************************************************
+// *****************************************************************************
 // Handrolled connect function
 // Goal -- Render any component, passing that component any data it needs from the store
 
@@ -145,58 +147,58 @@ class Provider extends React.Component {
 //   loading: state.loading
 // }))(App)
 
-function connect (mapStateToProps) {
-  return (Component) => {
-    class Receiver extends React.Component {
-      componentDidMount () {
-        const { subscribe } = this.props.store
+// function connect (mapStateToProps) {
+//   return (Component) => {
+//     class Receiver extends React.Component {
+//       componentDidMount () {
+//         const { subscribe } = this.props.store
+//
+//         this.unsubscribe = subscribe(() => this.forceUpdate())
+//       }
+//
+//       componentWillUnmount () {
+//         this.unsubscribe()
+//       }
+//
+//       render () {
+//         const { dispatch, getState } = this.props.store
+//         const state = getState()
+//         const stateNeeded = mapStateToProps(state)
+//         return <Component {...stateNeeded} dispatch={dispatch} />
+//       }
+//     }
+//
+//     class ConnectedComponent extends React.Component {
+//       render () {
+//         return (
+//           <Context.Consumer>
+//             {(store) => <Receiver store={store}/> }
+//           </Context.Consumer>
+//         )
+//       }
+//     }
+//
+//     return ConnectedComponent
+//   }
+// }
 
-        this.unsubscribe = subscribe(() => this.forceUpdate())
-      }
-
-      componentWillUnmount () {
-        this.unsubscribe()
-      }
-
-      render () {
-        const { dispatch, getState } = this.props.store
-        const state = getState()
-        const stateNeeded = mapStateToProps(state)
-        return <Component {...stateNeeded} dispatch={dispatch} />
-      }
-    }
-
-    class ConnectedComponent extends React.Component {
-      render () {
-        return (
-          <Context.Consumer>
-            {(store) => <Receiver store={store}/> }
-          </Context.Consumer>
-        )
-      }
-    }
-
-    return ConnectedComponent
-  }
-}
-
-const ConnectedApp = connect((state) => ({
+const ConnectedApp = ReactRedux.connect((state) => ({
     loading: state.loading
 }))(App)
 
-const ConnectedTodos = connect((state) => ({
+const ConnectedTodos = ReactRedux.connect((state) => ({
   todos: state.todos
 }))(Todos)
 
-const ConnectedGoals = connect((state) => ({
+const ConnectedGoals = ReactRedux.connect((state) => ({
   goals: state.goals
 }))(Goals)
 
 
 
 ReactDOM.render(
-  <Provider store={store}>
+  <ReactRedux.Provider store={store}>
     <ConnectedApp />
-  </Provider>,
+  </ReactRedux.Provider>,
   document.getElementById('app')
 )
