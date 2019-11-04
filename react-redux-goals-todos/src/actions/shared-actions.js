@@ -9,7 +9,7 @@ function receiveData (todos, goals) {
   }
 }
 
-export function handleRecieveData() {
+export function handleReceiveData() {
   return (dispatch) => {
     Promise.all([
       API.fetchTodos(),
