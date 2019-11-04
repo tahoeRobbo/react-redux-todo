@@ -133,33 +133,33 @@ and dispatch will be called
 Redux has got some push back, but changing applyMiddleware will be a
 big breaking, so just follow the pattern *shrug*
 note -- middleware fn's like below are passed as second arg in Redux.CreateStore via Redux.applyMiddleware
-*/
-const checker = (store) => (next) => (action) => {
-  if (
-    action.type === ADD_TODO &&
-    action.todo.name.toLowerCase().indexOf('bitcoin') !== -1
-  ) {
-    return alert('not now, maybe later..')
-  }
-
-  if (
-    action.type === ADD_GOAL &&
-    action.goal.name.toLowerCase().indexOf('bitcoin') !== -1
-  ) {
-    return alert('not now, maybe later..')
-  }
-
-  return next(action)
-}
-
-const logger = (store) => (next) => (action) => {
-  console.group(action.type)
-    console.log(`Current Action --`, action)
-    const res = next(action)
-    console.log(`Current State after action -- `, store.getState())
-  console.groupEnd()
-  return res
-}
+// */
+// const checker = (store) => (next) => (action) => {
+//   if (
+//     action.type === ADD_TODO &&
+//     action.todo.name.toLowerCase().indexOf('bitcoin') !== -1
+//   ) {
+//     return alert('not now, maybe later..')
+//   }
+//
+//   if (
+//     action.type === ADD_GOAL &&
+//     action.goal.name.toLowerCase().indexOf('bitcoin') !== -1
+//   ) {
+//     return alert('not now, maybe later..')
+//   }
+//
+//   return next(action)
+// }
+//
+// const logger = (store) => (next) => (action) => {
+//   console.group(action.type)
+//     console.log(`Current Action --`, action)
+//     const res = next(action)
+//     console.log(`Current State after action -- `, store.getState())
+//   console.groupEnd()
+//   return res
+// }
 
 // if the type of action is a fn, call that function passing it the dispatch fn as an arg
 // else, it's a normal object for dispatching so just pass it along
